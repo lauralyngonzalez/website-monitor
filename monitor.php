@@ -2,11 +2,11 @@
 <?php
   
 	$notified = false;
-	  
+	
 	echo "<p>Hello!!</p>";
-	$url = "http://161.35.237.130/";
+	//$url = "http://161.35.237.130/";
 
-	//$url = 'http://www.google.com';
+	$url = 'http://www.google.com';
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_HEADER, true);    // we want headers

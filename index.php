@@ -3,6 +3,13 @@
   <title>PHP Test</title>
  </head>
  <body>
-<?php include 'monitor.php';?>
+
+
+ 
+<?php
+include 'add.php';
+include 'monitor.php';
+
+?>
  </body>
 </html>
