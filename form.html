@@ -1,121 +1,122 @@
 <html>
- <head>
-  <title>PHP Test</title>
-  <style>
-  form {
-  /* Center the form on the page */
-  margin: 0 auto;
-  width: 400px;
-  /* Form outline */
-  padding: 1em;
-  border: 1px solid #CCC;
-  border-radius: 1em;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-form li + li {
-  margin-top: 1em;
-}
-
-label {
-  /* Uniform size & alignment */
-  display: inline-block;
-  width: 90px;
-  text-align: right;
-}
-
-input, 
-textarea {
-  /* To make sure that all text fields have the same font settings
-     By default, textareas have a monospace font */
-  font: 1em sans-serif;
-
-  /* Uniform text field size */
-  width: 300px;
-  box-sizing: border-box;
-
-  /* Match form field borders */
-  border: 1px solid #999;
-}
-
-input:focus, 
-textarea:focus {
-  /* Additional highlight for focused elements */
-  border-color: #000;
-}
-
-textarea {
-  /* Align multiline text fields with their labels */
-  vertical-align: top;
-
-  /* Provide space to type some text */
-  height: 5em;
-}
-
-.button {
-  /* Align buttons with the text fields */
-  padding-left: 90px; /* same size as the label elements */
-}
-
-button {
-  /* This extra margin represent roughly the same space as the space
-     between the labels and their text fields */
-  margin-left: .5em;
-}
-  </style>
- </head>
- <body onload="keywordSelected()">
- 
- <p id="demo">Select what to monitor:</p>
- 
-<form name="monitor_event" action="./processMonitor.php" onsubmit="return keywordSelected()" method="post">
- <ul>
-  <li>
-    <select id="monitor_type" name="monitor_type" onchange="keywordSelected()">
-		<option value="keyword">Keyword</option>
-		<option value="http" selected>HTTP</option>
-	</select>
-  </li>
-  <li>
-    <label for="host">URL</label>
-    <input type="text" id="host" name="host" value="http://" required/>
-  </li>
-  <li id="keywordText">
-    <label for="keyword">Keyword:</label>
-    <input type="text" id="keyword" name="keyword"/>
-  </li>
-  <li id="keywordExistOptions">
-	<label for="alert_keyword">Alert when:</label>
-    <select id="keyword_option" name="monitor_type" onchange="keywordSelected()">
-		<option value="exists">keyword exists</option>
-		<option value="doesNotExist">keyword does not exist</option>
-	</select>
-  </li>
-  <li>
-	<input type="submit" value="Submit">
-  </li>
- </ul>
-</form>
-
-<script>
-function keywordSelected() {
-	var monitor_selected = document.getElementById("monitor_type").value;
-	if (monitor_selected === "keyword") {
-		document.getElementById("keywordText").style.visibility = "visible";
-		document.getElementById("keywordExistOptions").style.visibility = "visible";
-		document.getElementById("keyword").setAttribute("required", "");
-	} else {
-		document.getElementById("keywordText").style.visibility = "hidden";
-		document.getElementById("keywordExistOptions").style.visibility = "hidden";
-		document.getElementById("keyword").removeAttribute("required");
+<head>
+<title>Add Monitor</title>
+<style>
+	form {
+		/* Center the form on the page */
+		margin: 0 auto;
+		width: 400px;
+		/* Form outline */
+		padding: 1em;
+		border: 1px solid #CCC;
+		border-radius: 1em;
 	}
-}
-</script>
 
- </body>
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	form li + li {
+		margin-top: 1em;
+	}
+
+	label {
+		/* Uniform size & alignment */
+		display: inline-block;
+		width: 90px;
+		text-align: right;
+	}
+
+	input, 
+	textarea {
+		/* To make sure that all text fields have the same font settings
+		 By default, textareas have a monospace font */
+		font: 1em sans-serif;
+
+		/* Uniform text field size */
+		width: 300px;
+		box-sizing: border-box;
+
+		/* Match form field borders */
+		border: 1px solid #999;
+	}
+
+	input:focus, 
+	textarea:focus {
+		/* Additional highlight for focused elements */
+		border-color: #000;
+	}
+
+	textarea {
+		/* Align multiline text fields with their labels */
+		vertical-align: top;
+
+		/* Provide space to type some text */
+		height: 5em;
+	}
+
+	.button {
+		/* Align buttons with the text fields */
+		padding-left: 90px; /* same size as the label elements */
+	}
+
+	button {
+		/* This extra margin represent roughly the same space as the space
+		 between the labels and their text fields */
+		margin-left: .5em;
+	}
+</style>
+</head>
+<body onload="keywordSelected()">
+
+	<p id="demo">Select what to monitor:</p>
+
+	<form name="monitor_event" action="./processMonitor.php" onsubmit="return keywordSelected()" method="post">
+		<ul>
+			<li>
+				<select id="monitor_type" name="monitor_type" onchange="keywordSelected()">
+					<option value="keyword">Keyword</option>
+					<option value="http" selected>HTTP</option>
+				</select>
+			</li>
+			<li>
+				<label for="host">URL</label>
+				<input type="text" id="host" name="host" value="http://" required/>
+			</li>
+			<li id="keywordText">
+				<label for="keyword">Keyword:</label>
+				<input type="text" id="keyword" name="keyword"/>
+			</li>
+			<li id="keywordExistOptions">
+				<label for="alert_keyword">Alert when:</label>
+				<select id="keyword_option" name="keyword_option" onchange="keywordSelected()">
+					<option value="exists">keyword exists</option>
+					<option value="doesNotExist">keyword does not exist</option>
+				</select>
+			</li>
+			<li>
+				<input type="submit" value="Submit">
+			</li>
+		</ul>
+	</form>
+
+	<script>
+		//when keyword is selected, change visibility of options and required fields
+		function keywordSelected() {
+			var monitor_selected = document.getElementById("monitor_type").value;
+			if (monitor_selected === "keyword") {
+				document.getElementById("keywordText").style.visibility = "visible";
+				document.getElementById("keywordExistOptions").style.visibility = "visible";
+				document.getElementById("keyword").setAttribute("required", "");
+			} else {
+				document.getElementById("keywordText").style.visibility = "hidden";
+				document.getElementById("keywordExistOptions").style.visibility = "hidden";
+				document.getElementById("keyword").removeAttribute("required");
+			}
+		}
+	</script>
+
+</body>
 </html>

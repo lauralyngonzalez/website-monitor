@@ -6,7 +6,7 @@
 	$keyword = htmlspecialchars($_POST["keyword"]);
 	$keyword_option = $_POST["keyword_option"];
 	
-	// convert keyword_option for db
+	echo $keyword_option;
 	if ($keyword_option == "exists") {
 		$keyword_option_bool = 1;
 	} else {
@@ -14,6 +14,7 @@
 	}
 	
 	try {
+		
 		// Keyword
 		if ($monitor_type == 'keyword') {
 			$sql = "INSERT INTO monitor(monitor_type,url,keyword,keyword_option)

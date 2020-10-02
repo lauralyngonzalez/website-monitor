@@ -25,7 +25,7 @@
 		// status is OK so turn off notification
 		if ($notified) {
 			$msg = "up";
-			mail("test.ping.email@gmail.com", "Back up", $msg);
+			//mail("test.ping.email@gmail.com", "Back up", $msg);
 			$notified = false;
 		}
 	} else {
@@ -33,7 +33,7 @@
 		// notify owner
 		if (!$notified) {
 			$msg = "down";
-			mail("test.ping.email@gmail.com", "Down", $msg);
+			//mail("test.ping.email@gmail.com", "Down", $msg);
 			$notified = true;
 		}
 	}
