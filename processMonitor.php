@@ -3,6 +3,7 @@
 	
 	$monitor_type = $_POST["monitor_type"];
 	$host = htmlspecialchars($_POST["host"]);
+	$name = htmlspecialchars($_POST["name"]);
 	$keyword = htmlspecialchars($_POST["keyword"]);
 	$keyword_option = $_POST["keyword_option"];
 	
@@ -16,21 +17,23 @@
 	try {
 		// Keyword
 		if ($monitor_type == 'keyword') {
-			$sql = "INSERT INTO monitor(monitor_type,url,keyword,keyword_option)
-				VALUES(:monitor_type,:url,:keyword,:keyword_option)";
+			$sql = "INSERT INTO monitor(monitor_type,url,name,keyword,keyword_option)
+				VALUES(:monitor_type,:url,:name,:keyword,:keyword_option)";
 			$stmt = $pdo->prepare($sql);
 			// Bind params to stmt
 			$stmt->bindParam(':monitor_type', $monitor_type);
 			$stmt->bindParam(':url', $host);
+			$stmt->bindParam(':name', $name);
 			$stmt->bindParam(':keyword', $keyword);
 			$stmt->bindParam(':keyword_option', $keyword_option_bool);
 		} else { // HTTP
-			$sql = "INSERT INTO monitor(monitor_type,url)
-				VALUES(:monitor_type,:url)";
+			$sql = "INSERT INTO monitor(monitor_type,url,name)
+				VALUES(:monitor_type,:url,:name)";
 			$stmt = $pdo->prepare($sql);
 			// Bind params to stmt
 			$stmt->bindParam(':monitor_type', $monitor_type);
 			$stmt->bindParam(':url', $host);
+			$stmt->bindParam(':name', $name);
 		}
 		
 		$stmt->execute();
