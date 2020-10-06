@@ -41,7 +41,7 @@
 		}
 	}
 
-	echo $date;
+	//echo $date;
 
 	header("refresh: 30");
 

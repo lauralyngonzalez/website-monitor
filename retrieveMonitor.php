@@ -16,7 +16,7 @@
 			curl_close($ch);
 			return $httpcode;
 		}
-
+		
 	}
 
 	$monitor = new monitor;
@@ -27,7 +27,7 @@
 		$monitor_data = $stmt->fetchAll();
 		
 		echo "<table style='border: solid 1px black;'>";
-		echo "<tr><th>status</th><th>name</th></tr>";
+		echo "<tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>";
 		
 		foreach($monitor_data as $row) {
 			$name = $row['name'];
@@ -45,23 +45,39 @@
 					WHERE monitor_id = '$monitor_id'");
 			$stmt->execute();
 			$active_monitors = $stmt->fetchAll();
+			$datetime = date("Y-m-d H:i:s"); 
 			
 			// add if monitor doesn't exist
 			if (empty($active_monitors)) {
-				echo 'empty';
-				// have to adjust this to DATETIME
-				$date = date("M d, Y h:i:s A");
 				
-				$sql = "INSERT INTO monitor_event(monitor_id,status)
-					VALUES(:monitor_id,:status)";
+				
+				$sql = "INSERT INTO monitor_event(monitor_id,status,timestamp)
+					VALUES(:monitor_id,:status,:timestamp)";
 				$stmt = $pdo->prepare($sql);
 				$stmt->bindParam(':monitor_id', $monitor_id);
 				$stmt->bindParam(':status', $httpStatus);
-				$stmt->execute();	
+				$stmt->bindParam(':timestamp', $datetime);
+				$stmt->execute();
+			} else {
+				// monitor exists, so check if the status changed
+				$datetime = $active_monitors[0]['timestamp'];
+				$current_datetime = date("Y-m-d H:i:s");
+				
+				// Initialising the two datetime objects
+				$datetime1 = new DateTime($datetime); 
+				$datetime2 = new DateTime($current_datetime); 
+  
+				// Calling the diff() function on above 
+				// two DateTime objects 
+				$difference = $datetime1->diff($datetime2); 
+				$duration = $difference->format('%h') . " hrs, " . $difference->format('%i') . " mins";
 			}
 			
 			echo "<tr><td style='width:150px;border:1px solid black;'>" . $httpStatus . "</td>" .
-			"<td style='width:150px;border:1px solid black;'>" . $name . "</td></tr>"; 
+			"<td style='width:150px;border:1px solid black;'>" . $name . "</td>" .
+			"<td style='width:150px;border:1px solid black;'>" . $datetime . "</td>" .
+			"<td style='width:150px;border:1px solid black;'>" . $duration . "</td>" .
+			"</tr>"; 
 		}
 	} catch(PDOException $e) {
 		echo "Error: " . $e->getMessage();
