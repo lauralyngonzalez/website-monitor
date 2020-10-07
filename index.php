@@ -4,14 +4,9 @@
  </head>
  <body>
 
-
- 
 <?php
-include 'add.php';
-include 'monitor.php';
-include 'retrieveMonitor.php';
-
-
+	include 'form.html';
+	include 'retrieveMonitor.php';
 
 ?>
  </body>

@@ -1,25 +1,8 @@
 <?php
-	require_once "config.php";
+	include "config.php";
+	require_once "monitor.php";
 	
-	// monitor class for getting http status
-	class monitor {
-
-		function getStatus($url) {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_HEADER, true);    // we want headers
-			curl_setopt($ch, CURLOPT_NOBODY, true);    // we don't need body
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_TIMEOUT,10);
-			$output = curl_exec($ch);
-			$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close($ch);
-			return $httpcode;
-		}
-		
-	}
-
-	$monitor = new monitor;
+	$monitor = new monitor();
 
 	try {
 		$stmt = $pdo->prepare("SELECT id, monitor_type, url, name FROM monitor");
@@ -36,6 +19,15 @@
 			if($row['monitor_type'] == "http") {
 				$url = $row['url'];
 				$httpStatus = $monitor->getStatus($url);
+			} else if($row['monitor_type'] == "keyword") {
+				$url = "http://www.example.com";
+				//$url = "https://medium.com/illumination-curated/6-perfect-hobbies-for-introverts-and-people-who-like-to-be-alone-5e9fb30490fd";
+				$keyword = "domain";
+				if ($monitor->hasKeyword($keyword, $url)) {
+					echo 'found!';
+				} else {
+					echo 'not found!';
+				}
 			}
 			
 			// check active monitor table
@@ -50,7 +42,6 @@
 			// add if monitor doesn't exist
 			if (empty($active_monitors)) {
 				
-				
 				$sql = "INSERT INTO monitor_event(monitor_id,status,timestamp)
 					VALUES(:monitor_id,:status,:timestamp)";
 				$stmt = $pdo->prepare($sql);
@@ -58,6 +49,7 @@
 				$stmt->bindParam(':status', $httpStatus);
 				$stmt->bindParam(':timestamp', $datetime);
 				$stmt->execute();
+				$duration = "0 hrs, 0 mins";
 			} else {
 				// monitor exists, so check if the status changed
 				$datetime = $active_monitors[0]['timestamp'];
@@ -86,4 +78,5 @@
 	$pdo = null;
 	
 	echo "</table>";
+	
 ?> 
