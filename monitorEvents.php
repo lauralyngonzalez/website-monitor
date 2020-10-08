@@ -2,13 +2,12 @@
 	include "config.php";
 	require_once "monitor.php";
 	
-	$monitor = new monitor();
+	$monitor = new Monitor($db);
 
 	try {
-		$stmt = $pdo->prepare("SELECT id, monitor_type, url, name FROM monitor");
-		$stmt->execute();
-		$monitor_data = $stmt->fetchAll();
+		$monitor_data = $monitor->getMonitors();
 		
+		echo "<h3>Active Monitors:</h3>";
 		echo "<table style='border: solid 1px black;'>";
 		echo "<tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>";
 		
@@ -32,23 +31,13 @@
 			
 			// check active monitor table
 			$monitor_id = $row['id'];
-			$stmt = $pdo->prepare("SELECT status, timestamp, notified
-					FROM monitor_event
-					WHERE monitor_id = '$monitor_id'");
-			$stmt->execute();
-			$active_monitors = $stmt->fetchAll();
+			$active_monitors = $monitor->getMonitorEvents($monitor_id);
+			
 			$datetime = date("Y-m-d H:i:s"); 
 			
 			// add if monitor doesn't exist
 			if (empty($active_monitors)) {
-				
-				$sql = "INSERT INTO monitor_event(monitor_id,status,timestamp)
-					VALUES(:monitor_id,:status,:timestamp)";
-				$stmt = $pdo->prepare($sql);
-				$stmt->bindParam(':monitor_id', $monitor_id);
-				$stmt->bindParam(':status', $httpStatus);
-				$stmt->bindParam(':timestamp', $datetime);
-				$stmt->execute();
+				$monitor->createMonitorEvent($monitor_id, $httpStatus, $datetime);
 				$duration = "0 hrs, 0 mins";
 			} else {
 				// monitor exists, so check if the status changed
@@ -71,11 +60,12 @@
 			"<td style='width:150px;border:1px solid black;'>" . $duration . "</td>" .
 			"</tr>"; 
 		}
+		
 	} catch(PDOException $e) {
 		echo "Error: " . $e->getMessage();
 	}
 	
-	$pdo = null;
+	$db = null;
 	
 	echo "</table>";
 	
