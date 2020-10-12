@@ -1,49 +1,41 @@
 <?php
-	require_once "config.php";
-	
-	$monitor_type = $_POST["monitor_type"];
-	$host = htmlspecialchars($_POST["host"]);
-	$name = htmlspecialchars($_POST["name"]);
-	$keyword = htmlspecialchars($_POST["keyword"]);
-	$keyword_option = $_POST["keyword_option"];
-	
-	// convert keyword_option for db
-	if ($keyword_option == "exists") {
-		$keyword_option_bool = 1;
-	} else {
-		$keyword_option_bool = 0;
-	}
-	
-	try {
+	include "config.php";
+	require_once "monitor.php";
+
+	$monitor = new Monitor($db);
+
+	// delete monitor
+	if (isset($_POST['delete'])) {
+		$monitor->deleteMonitor($_POST['delete']);
+		echo 'deleted ' . $_POST['delete'];
+	} else { // update monitor
+
+		$monitor_type = $_POST["monitor_type"];
+		$host = htmlspecialchars($_POST["host"]);
+		$name = htmlspecialchars($_POST["name"]);
+		$keyword = htmlspecialchars($_POST["keyword"]);
+		$keyword_option = $_POST["keyword_option"];
+		
+		// convert keyword_option for db
+		if ($keyword_option == "exists") {
+			$keyword_option_bool = 1;
+		} else {
+			$keyword_option_bool = 0;
+		}
+
 		// Keyword
 		if ($monitor_type == 'keyword') {
-			$sql = "INSERT INTO monitor(monitor_type,url,name,keyword,keyword_option)
-				VALUES(:monitor_type,:url,:name,:keyword,:keyword_option)";
-			$stmt = $pdo->prepare($sql);
-			// Bind params to stmt
-			$stmt->bindParam(':monitor_type', $monitor_type);
-			$stmt->bindParam(':url', $host);
-			$stmt->bindParam(':name', $name);
-			$stmt->bindParam(':keyword', $keyword);
-			$stmt->bindParam(':keyword_option', $keyword_option_bool);
+			$monitor->createKeywordMonitor($monitor_type, $host, $name, $keyword, $keyword_option_bool);
 		} else { // HTTP
-			$sql = "INSERT INTO monitor(monitor_type,url,name)
-				VALUES(:monitor_type,:url,:name)";
-			$stmt = $pdo->prepare($sql);
-			// Bind params to stmt
-			$stmt->bindParam(':monitor_type', $monitor_type);
-			$stmt->bindParam(':url', $host);
-			$stmt->bindParam(':name', $name);
+			$monitor->createHttpMonitor($monitor_type, $host, $name);
 		}
 		
-		$stmt->execute();
 		echo "Records inserted!";
-	} catch(PDOException $e) {
-		die("ERROR: Could not connect. " . $e->getMessage());
-	}
 
-	//close connection
-	unset($pdo);
+		//close connection
+		unset($db);
+	}
 	
 	header('Refresh: 1; url=index.php');
+		
 ?>

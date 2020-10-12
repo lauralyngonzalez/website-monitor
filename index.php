@@ -6,7 +6,6 @@
 
 <?php
 	include 'form.html';
-	
 	include 'monitorEvents.php';
 
 ?>

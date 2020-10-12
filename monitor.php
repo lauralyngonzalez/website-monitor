@@ -46,6 +46,34 @@ class Monitor {
 		return $monitor_data;
 	}
 	
+	// Get monitor by id
+	public function getMonitor($monitor_id) {
+		try {
+			$stmt = $this->db->prepare("SELECT *
+					FROM monitor WHERE id = '$monitor_id'");
+			$stmt->execute();
+			$monitor_data = $stmt->fetch();
+		} catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+		}
+		return $monitor_data;
+	}
+	
+	// creates a monitor
+	public function createHttpMonitor($monitorType, $host, $name) {
+		try {
+			$sql = "INSERT INTO monitor(monitor_type,url,name)
+				VALUES(:monitor_type,:url,:name)";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindParam(':monitor_type', $monitorType);
+			$stmt->bindParam(':url', $host);
+			$stmt->bindParam(':name', $name);
+			$stmt->execute();
+		} catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+		}
+	}
+	
 	// creates a monitor event
 	public function createMonitorEvent($monitor_id, $httpStatus, $datetime) {
 		try {
@@ -55,6 +83,23 @@ class Monitor {
 			$stmt->bindParam(':monitor_id', $monitor_id);
 			$stmt->bindParam(':status', $httpStatus);
 			$stmt->bindParam(':timestamp', $datetime);
+			$stmt->execute();
+		} catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+		}
+	}
+	
+	// creates a keyword monitor
+	public function createKeywordMonitor($monitorType, $host, $name, $keyword, $keywordOpt) {
+		try {
+			$sql = "INSERT INTO monitor(monitor_type,url,name,keyword,keyword_option)
+				VALUES(:monitor_type,:url,:name,:keyword,:keyword_option)";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindParam(':monitor_type', $monitorType);
+			$stmt->bindParam(':url', $host);
+			$stmt->bindParam(':name', $name);
+				$stmt->bindParam(':keyword', $keyword);
+				$stmt->bindParam(':keyword_option', $keyword_option_bool);
 			$stmt->execute();
 		} catch(PDOException $e) {
 			echo "Error: " . $e->getMessage();
