@@ -60,15 +60,29 @@ class Monitor {
 	}
 	
 	// creates a monitor
-	public function createHttpMonitor($monitorType, $host, $name) {
+	public function createMonitor($monitorType, $host, $name, $keyword, $keywordOpt) {
 		try {
-			$sql = "INSERT INTO monitor(monitor_type,url,name)
-				VALUES(:monitor_type,:url,:name)";
+			$sql = "INSERT INTO monitor(monitor_type,url,name,keyword,keyword_option)
+				VALUES(:monitor_type,:url,:name,:keyword,:keyword_option)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindParam(':monitor_type', $monitorType);
 			$stmt->bindParam(':url', $host);
 			$stmt->bindParam(':name', $name);
+			$stmt->bindParam(':keyword', $keyword);
+			$stmt->bindParam(':keyword_option', $keywordOpt);
 			$stmt->execute();
+		} catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+		}
+	}
+	
+	// update an existing monitor
+	public function updateMonitor($monitorId, $host, $name, $keyword, $keywordOpt) {
+		try {
+			$sql = "UPDATE monitor SET url=?, name=?, keyword=?, keyword_option=?
+				WHERE id = $monitorId ";
+			$stmt = $this->db->prepare($sql);
+			$stmt->execute([$host, $name, $keyword, $keywordOpt]);
 		} catch(PDOException $e) {
 			echo "Error: " . $e->getMessage();
 		}
@@ -83,23 +97,6 @@ class Monitor {
 			$stmt->bindParam(':monitor_id', $monitor_id);
 			$stmt->bindParam(':status', $httpStatus);
 			$stmt->bindParam(':timestamp', $datetime);
-			$stmt->execute();
-		} catch(PDOException $e) {
-			echo "Error: " . $e->getMessage();
-		}
-	}
-	
-	// creates a keyword monitor
-	public function createKeywordMonitor($monitorType, $host, $name, $keyword, $keywordOpt) {
-		try {
-			$sql = "INSERT INTO monitor(monitor_type,url,name,keyword,keyword_option)
-				VALUES(:monitor_type,:url,:name,:keyword,:keyword_option)";
-			$stmt = $this->db->prepare($sql);
-			$stmt->bindParam(':monitor_type', $monitorType);
-			$stmt->bindParam(':url', $host);
-			$stmt->bindParam(':name', $name);
-				$stmt->bindParam(':keyword', $keyword);
-				$stmt->bindParam(':keyword_option', $keyword_option_bool);
 			$stmt->execute();
 		} catch(PDOException $e) {
 			echo "Error: " . $e->getMessage();

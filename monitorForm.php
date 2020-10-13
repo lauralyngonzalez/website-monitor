@@ -10,6 +10,7 @@
 	$monitorName = $monitor_data['name'];
 	$url = $monitor_data['url'];
 
+	$data = array($monitor_id, $monitorType);
 ?>
 
 
@@ -82,58 +83,81 @@
 	}
 </style>
 </head>
-<body onload="keywordSelected()">
+<body>
 
 	<div id="monitorForm">
 
-	<form name="monitor_event" action="./processMonitor.php" onsubmit="return keywordSelected()" method="post">
+	<form name="monitor_event" action="./processMonitor.php" method="post">
 		<ul>
 			<li>
 				<?php echo $monitorType; ?>
 			</li>
 			<li>
 				<label for="host">URL:</label>
-				<input type="text" id="host" name="host" value="<?php echo $url;?>" required/>
+				<input type="text" id="host" name="host" value="<?php echo $url;?>"/>
 			</li>
 			<li>
 				<label for="name">Name:</label>
-				<input type="text" id="name" name="name" value="<?php echo $monitorName;?>" required/>
+				<input type="text" id="name" name="name" value="<?php echo $monitorName;?>"/>
 			</li>
 			
-			<?php 
-			
-			if ($monitorType == "keyword") {
-				echo '<li id="keywordText">' .
-					'<label for="keyword">Keyword:</label>' .
-					'<input type="text" id="keyword" name="keyword" value="';
-				echo $monitor_data['keyword'];
-				echo '" required/>' .
-					'</li>';
-				echo '<li id="keywordExistOptions">' .
-					'<label for="alert_keyword">Alert when:</label>' .
-					'<select id="keyword_option" name="keyword_option">' .
-						'<option value="exists"';
-				if ($monitor_data['keyword_option']	== 1) {
-					echo "selected";
-				}
-				echo '>keyword exists</option>' .
-						'<option value="doesNotExist"';
-				if ($monitor_data['keyword_option']	== 0) {
-					echo "selected";
-				}	
-				echo '>keyword does not exist</option>' .
-					'</select>' .
-					'</li>';
-			}
-			?>
+			<?php if ($monitorType == "keyword") : ?>
+	
+			<li>
+				<label for="keyword">Keyword:</label>
+				<input type="text" id="keyword" name="keyword" value="<?php echo $monitor_data['keyword']; ?>" />
+			</li>
+			<li>
+				<label for="alert_keyword">Alert when:</label>
+				<select id="keyword_option" name="keyword_option">
+				
+				<?php if ($monitor_data['keyword_option'] == 1) : ?>
+					<option value="exists" selected>keyword exists</option>
+					<option value="doesNotExist">keyword does not exist</option>
+				<?php else : ?>
+					<option value="exists">keyword exists</option>
+					<option value="doesNotExist" selected>keyword does not exist</option>
+				<?php endif; ?>
+				
+				</select>
+			</li>
+
+			<?php endif; ?>
 			
 			<li>
-				<button type="submit" name="delete" value="<?php echo $monitor_id; ?>">Delete</button>
-				<input type="submit" name="save" value="Save">
+				<button type="submit" onclick="changeRequired(0, '<?php echo $monitorType; ?>')"
+				name="cancel">Cancel</button>
+			</li>
+			<li>
+				<button type="submit" name="delete" onclick="changeRequired(0, '<?php echo $monitorType; ?>')"
+				value="<?php echo $monitor_id; ?>">Delete</button>
+				<button type="submit" name="save" onclick="changeRequired(1, '<?php echo $monitorType; ?>')"
+				value="<?php echo $monitor_id; ?>, <?php echo $monitorType; ?>">Save</button>
 			</li>
 		</ul>
 	</form>
 	</div>
+
+<script>
+	// set required fields based on which buttons are pushed
+	function changeRequired(req, monitorType) {
+		if (req == 1) {
+			document.getElementById("host").setAttribute("required", "");
+			document.getElementById("name").setAttribute("required", "");
+			// keyword 
+			if (monitorType == "keyword") {
+				document.getElementById("keyword").setAttribute("required", "");
+			}
+		} else {
+			document.getElementById("host").removeAttribute("required");
+			document.getElementById("name").removeAttribute("required");
+			if (monitorType == "keyword") {
+				document.getElementById("keyword").removeAttribute("required");
+			}
+		}
+
+	}
+</script>
 
 </body>
 </html>

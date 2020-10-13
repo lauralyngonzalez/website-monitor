@@ -2,40 +2,61 @@
 	include "config.php";
 	require_once "monitor.php";
 
-	$monitor = new Monitor($db);
-
-	// delete monitor
-	if (isset($_POST['delete'])) {
-		$monitor->deleteMonitor($_POST['delete']);
-		echo 'deleted ' . $_POST['delete'];
-	} else { // update monitor
-
+	if (isset($_POST['submit'])) {
+		$monitor = new Monitor($db);
 		$monitor_type = $_POST["monitor_type"];
 		$host = htmlspecialchars($_POST["host"]);
 		$name = htmlspecialchars($_POST["name"]);
 		$keyword = htmlspecialchars($_POST["keyword"]);
-		$keyword_option = $_POST["keyword_option"];
-		
-		// convert keyword_option for db
-		if ($keyword_option == "exists") {
-			$keyword_option_bool = 1;
-		} else {
-			$keyword_option_bool = 0;
-		}
-
+		$keywordOpt = $_POST["keyword_option"];
+				
 		// Keyword
-		if ($monitor_type == 'keyword') {
-			$monitor->createKeywordMonitor($monitor_type, $host, $name, $keyword, $keyword_option_bool);
-		} else { // HTTP
-			$monitor->createHttpMonitor($monitor_type, $host, $name);
+		if ($monitor_type != 'keyword') {
+			$keyword = NULL;
+			$keywordOptBool = NULL;
+		} else if ($keywordOpt == 'exists') { // convert keyword_option for db
+			$keywordOptBool = 1; //keyword 
+		} else {
+			$keywordOptBool = 0;
 		}
 		
-		echo "Records inserted!";
+		$monitor->createMonitor($monitor_type, $host, $name, $keyword, $keywordOptBool);
+		echo "Record inserted!";
+		
+	} else if (isset($_POST['delete'])) {	// delete monitor
+		$monitor = new Monitor($db);
+		$monitor->deleteMonitor($_POST['delete']);
+		
+		echo 'deleted ' . $_POST['delete'];
+		
+	} else if (isset($_POST['save'])) { // update monitor
+		$monitor = new Monitor($db);
+		$monitorArray = explode(",", $_POST["save"]);
+		$monitorId = $monitorArray[0];
+		$monitorType = trim($monitorArray[1]);
+		$host = htmlspecialchars($_POST["host"]);
+		$name = htmlspecialchars($_POST["name"]);
+		$keyword = htmlspecialchars($_POST["keyword"]);
+		$keywordOpt = $_POST["keyword_option"];
+			
+		// Keyword
+		if ($monitorType != "keyword") {
+			$keyword = NULL;
+			$keywordOptBool = NULL;
+		} else if ($keywordOpt == "exists") { // convert keyword_option for db
+			$keywordOptBool = 1; //keyword 
+		} else {
+			$keywordOptBool = 0;
+		}
 
-		//close connection
-		unset($db);
+		$monitor->updateMonitor($monitorId, $host, $name, $keyword, $keywordOptBool);
+		echo "Record updated!";
+
+	} else {	// cancel
+		header("Location: index.php");
+		exit;
 	}
 	
 	header('Refresh: 1; url=index.php');
-		
+	
 ?>
