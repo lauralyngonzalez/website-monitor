@@ -18,20 +18,26 @@
 
 		foreach($monitor_data as $row) {
 			$name = $row['name'];
+			$url = $row['url'];
 			
 			// get http status
 			if($row['monitor_type'] == "http") {
-				$url = $row['url'];
-				$httpStatus = $monitor->getStatus($url);
+				$status = $monitor->getStatus($url);
 			} else if($row['monitor_type'] == "keyword") {
-				$url = "http://www.example.com";
-				//$url = "https://medium.com/illumination-curated/6-perfect-hobbies-for-introverts-and-people-who-like-to-be-alone-5e9fb30490fd";
-				$keyword = "domain";
-				if ($monitor->hasKeyword($keyword, $url)) {
-					//echo 'found!';
+				$keyword = $row['keyword'];
+				$found = $monitor->hasKeyword($keyword, $url);
+				
+				// get status for keyword
+				if ($found && $row['keyword_option'] == 0) {
+					$status = "Up - Keyword '$keyword' Found";	// found, alert if not exists
+				} else if ($found && $row['keyword_option'] == 1) {
+					$status = "Down - Keyword '$keyword' Found";	// found, alert if it exists
+				} else if ($row['keyword_option'] == 0) {
+					$status = "Up - Keyword '$keyword' Not Found";	// not found, alert if not exists
 				} else {
-					//echo 'not found!';
+					$status = "Down - Keyword '$keyword' Not Found";	// not found, alert if it exists
 				}
+				
 			}
 			
 			// check active monitor table
@@ -42,7 +48,7 @@
 			
 			// add if monitor doesn't exist
 			if (empty($active_monitors)) {
-				$monitor->createMonitorEvent($monitor_id, $httpStatus, $datetime);
+				$monitor->createMonitorEvent($monitor_id, $status, $datetime);
 				$duration = "0 hrs, 0 mins";
 			} else {
 				// monitor exists, so check if the status changed
@@ -56,16 +62,16 @@
 				// Calling the diff() function on above 
 				// two DateTime objects 
 				$difference = $datetime1->diff($datetime2); 
-				$duration = $difference->format('%h') . " hrs, " . $difference->format('%i') . " mins";
+				$duration = $difference->format('%d') . " days, " . $difference->format('%h') . " hrs, " . $difference->format('%i') . " mins";
 			}
 ?>
 
 <tr>
-	<td style='width:150px;border:1px solid black;'><?php echo $httpStatus; ?></td>
-	<td style='width:150px;border:1px solid black;'><?php echo $name; ?></td>
-	<td style='width:150px;border:1px solid black;'><?php echo $datetime; ?></td>
-	<td style='width:150px;border:1px solid black;'><?php echo $duration; ?></td>
-	<td style='width:150px;border:1px solid black;'>
+	<td style='width:200px;border:1px solid black;'><?php echo $status; ?></td>
+	<td style='width:200;border:1px solid black;'><?php echo $name; ?></td>
+	<td style='width:200;border:1px solid black;'><?php echo $datetime; ?></td>
+	<td style='width:200;border:1px solid black;'><?php echo $duration; ?></td>
+	<td style='width:200;border:1px solid black;'>
 		<form style="border:none;margin:0px;padding:0px;display:inline" action="monitorForm.php" method="post">
 		<button type="submit" name="id" value="<?php echo $monitor_id; ?>">Edit</button>
 		</form>
@@ -80,6 +86,7 @@
 	
 	$db = null;
 	
+	header("refresh: 60");
 ?> 
 
 </table></div>

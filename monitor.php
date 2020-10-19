@@ -37,7 +37,8 @@ class Monitor {
 	// Gets all monitors
 	public function getMonitors() {
 		try {
-			$stmt = $this->db->prepare("SELECT id, monitor_type, url, name FROM monitor");
+			$stmt = $this->db->prepare("SELECT * FROM monitor");
+			//$stmt = $this->db->prepare("SELECT id, monitor_type, url, name FROM monitor");
 			$stmt->execute();
 			$monitor_data = $stmt->fetchAll();
 		} catch(PDOException $e) {
@@ -151,6 +152,6 @@ if ($httpcode == 200) {
 }
 */
 
-header("refresh: 60");
+
 
 ?> 
