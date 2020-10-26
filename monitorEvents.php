@@ -1,7 +1,9 @@
 <?php
 	include "config.php";
 	require_once "monitor.php";
-
+	
+	header("refresh: 60;");
+	
 	$monitor = new Monitor($db);
 
 	try {
@@ -11,10 +13,13 @@
 
 <div id="activeMonitors">
 
+<h3>Active Monitors:</h3><table style='border: solid 1px black;'>
+<tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>
+
 <?php
 
-		echo "<h3>Active Monitors:</h3><table style='border: solid 1px black;'>";
-		echo "<tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>";
+		//echo "<h3>Active Monitors:</h3><table style='border: solid 1px black;'>";
+		//echo "<tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>";
 
 		foreach($monitor_data as $row) {
 			$name = $row['name'];
@@ -42,17 +47,17 @@
 			
 			// check active monitor table
 			$monitor_id = $row['id'];
-			$active_monitors = $monitor->getMonitorEvents($monitor_id);
+			$active_monitor = $monitor->getMonitorEvent($monitor_id);
 			
 			$datetime = date("Y-m-d H:i:s"); 
 			
 			// add if monitor doesn't exist
-			if (empty($active_monitors)) {
+			if (empty($active_monitor)) {
 				$monitor->createMonitorEvent($monitor_id, $status, $datetime);
 				$duration = "0 hrs, 0 mins";
 			} else {
 				// monitor exists, so check if the status changed
-				$datetime = $active_monitors[0]['timestamp'];
+				$datetime = $active_monitor['timestamp'];
 				$current_datetime = date("Y-m-d H:i:s");
 				
 				// Initializing the two datetime objects
@@ -62,8 +67,14 @@
 				// Calling the diff() function on above 
 				// two DateTime objects 
 				$difference = $datetime1->diff($datetime2); 
-				$duration = $difference->format('%d') . " days, " . $difference->format('%h') . " hrs, " . $difference->format('%i') . " mins";
+				//$duration = $difference->format('%d') . " days, " . $difference->format('%h') . " hrs, " . $difference->format('%i') . " mins";
+				$hours = $difference->h + ($difference->days*24);
+				$duration = $hours . " hrs, " . $difference->format('%i') . " mins";
+				
+				$monitor->updateMonitorEvent($monitor_id, $status, $datetime, $hours);
 			}
+			
+			//$monitor->writeToLogFile($name, $status, $datetime, $hours, $url);
 ?>
 
 <tr>
@@ -83,10 +94,9 @@
 	} catch(PDOException $e) {
 		echo "Error: " . $e->getMessage();
 	}
-	
+		
 	$db = null;
 	
-	header("refresh: 60");
 ?> 
 
 </table></div>
