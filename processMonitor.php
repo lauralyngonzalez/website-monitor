@@ -8,19 +8,19 @@
 		$host = htmlspecialchars($_POST["host"]);
 		$name = htmlspecialchars($_POST["name"]);
 		$keyword = htmlspecialchars($_POST["keyword"]);
-		$keywordOpt = $_POST["keyword_option"];
+		$keyword_opt = $_POST["keyword_option"];
 				
 		// Keyword
 		if ($monitor_type != 'keyword') {
 			$keyword = NULL;
-			$keywordOptBool = NULL;
-		} else if ($keywordOpt == 'exists') { // convert keyword_option for db
-			$keywordOptBool = 1; //keyword 
+			$keyword_opt_bool = NULL;
+		} else if ($keyword_opt == 'exists') { // convert keyword_option for db
+			$keyword_opt_bool = 1; //keyword 
 		} else {
-			$keywordOptBool = 0;
+			$keyword_opt_bool = 0;
 		}
 		
-		$monitor->createMonitor($monitor_type, $host, $name, $keyword, $keywordOptBool);
+		$monitor->createMonitor($monitor_type, $host, $name, $keyword, $keyword_opt_bool);
 		echo "Record inserted!";
 		
 	} else if (isset($_POST['delete'])) {	// delete monitor
@@ -31,25 +31,25 @@
 		
 	} else if (isset($_POST['save'])) { // update monitor
 		$monitor = new Monitor($db);
-		$monitorArray = explode(",", $_POST["save"]);
-		$monitorId = $monitorArray[0];
-		$monitorType = trim($monitorArray[1]);
+		$monitor_arr = explode(",", $_POST["save"]);
+		$monitor_id = $monitor_arr[0];
+		$monitor_type = trim($monitor_arr[1]);
 		$host = htmlspecialchars($_POST["host"]);
 		$name = htmlspecialchars($_POST["name"]);
 		$keyword = htmlspecialchars($_POST["keyword"]);
-		$keywordOpt = $_POST["keyword_option"];
+		$keyword_opt = $_POST["keyword_option"];
 			
 		// Keyword
-		if ($monitorType != "keyword") {
+		if ($monitor_type != "keyword") {
 			$keyword = NULL;
-			$keywordOptBool = NULL;
-		} else if ($keywordOpt == "exists") { // convert keyword_option for db
-			$keywordOptBool = 1; //keyword 
+			$keyword_opt_bool = NULL;
+		} else if ($keyword_opt == "exists") { // convert keyword_option for db
+			$keyword_opt_bool = 1; //keyword 
 		} else {
-			$keywordOptBool = 0;
+			$keyword_opt_bool = 0;
 		}
 
-		$monitor->updateMonitor($monitorId, $host, $name, $keyword, $keywordOptBool);
+		$monitor->updateMonitor($monitor_id, $host, $name, $keyword, $keyword_opt_bool);
 		echo "Record updated!";
 
 	} else {	// cancel
