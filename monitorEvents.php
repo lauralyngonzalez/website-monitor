@@ -13,13 +13,13 @@
 
 <div id="activeMonitors">
 
-<h3>Active Monitors:</h3><table style='border: solid 1px black;'>
+<h3>Active Monitors:</h3>
+
+<p>Export logs</p>
+<table>
 <tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>
 
 <?php
-
-		//echo "<h3>Active Monitors:</h3><table style='border: solid 1px black;'>";
-		//echo "<tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>";
 
 		foreach($monitor_data as $row) {
 			$name = $row['name'];
@@ -78,11 +78,11 @@
 ?>
 
 <tr>
-	<td style='width:200px;border:1px solid black;'><?php echo $status; ?></td>
-	<td style='width:200;border:1px solid black;'><?php echo $name; ?></td>
-	<td style='width:200;border:1px solid black;'><?php echo $datetime; ?></td>
-	<td style='width:200;border:1px solid black;'><?php echo $duration; ?></td>
-	<td style='width:200;border:1px solid black;'>
+	<td style='width:200px;'><?php echo $status; ?></td>
+	<td style='width:200;'><?php echo $name; ?></td>
+	<td style='width:200;'><?php echo $datetime; ?></td>
+	<td style='width:200;'><?php echo $duration; ?></td>
+	<td style='width:200;'>
 		<form style="border:none;margin:0px;padding:0px;display:inline" action="monitorForm.php" method="post">
 		<button type="submit" name="id" value="<?php echo $monitor_id; ?>">Edit</button>
 		</form>

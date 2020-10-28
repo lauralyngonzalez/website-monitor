@@ -1,3 +1,8 @@
+<html><head>
+	<title>Website Monitor</title>
+	<link rel="stylesheet" href="styles.css">
+</head></html>
+
 <?php
 	include "config.php";
 	require_once "monitor.php";
