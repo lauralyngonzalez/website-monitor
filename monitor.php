@@ -155,6 +155,7 @@ class Monitor {
 		$log = $monitor_name.",".$status.",".$datetime.",".$duration.",".$url.PHP_EOL;
 		file_put_contents($filename, $log, FILE_APPEND);
 	}
+	
 	/*
 	// Checks status and alerts owner if status is down
 	public function checkStatus($monitor_id, $) {

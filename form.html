@@ -1,7 +1,7 @@
 <html>
 <body onload="keywordSelected()">
 
-	<div id="monitorForm">
+	<div class="monitorForm">
 	<h3>Select what to monitor:</h3>
 
 	<form name="monitor_event" action="./processMonitor.php" onsubmit="return keywordSelected()" method="post">
@@ -39,6 +39,8 @@
 	</div>
 
 	<script>
+		//keywordSelected();
+
 		//when keyword is selected, change visibility of options and required fields
 		function keywordSelected() {
 			var monitor_selected = document.getElementById("monitor_type").value;

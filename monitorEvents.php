@@ -11,12 +11,11 @@
 
 ?>
 
-<div id="activeMonitors">
+<div class="monitorEvents">
 
-<h3>Active Monitors:</h3>
+<h3>Monitor Events:</h3>
 
-<p>Export logs</p>
-<table>
+<table style="width:100%">
 <tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>
 
 <?php
@@ -78,15 +77,10 @@
 ?>
 
 <tr>
-	<td style='width:200px;'><?php echo $status; ?></td>
-	<td style='width:200;'><?php echo $name; ?></td>
-	<td style='width:200;'><?php echo $datetime; ?></td>
-	<td style='width:200;'><?php echo $duration; ?></td>
-	<td style='width:200;'>
-		<form style="border:none;margin:0px;padding:0px;display:inline" action="monitorForm.php" method="post">
-		<button type="submit" name="id" value="<?php echo $monitor_id; ?>">Edit</button>
-		</form>
-	</td>
+	<td style="width:30%"><?php echo $status; ?></td>
+	<td style="width:25%"><?php echo $name; ?></td>
+	<td style="width:25%"><?php echo $datetime; ?></td>
+	<td style="width:20%"><?php echo $duration; ?></td>
 </tr>
 
 <?php
@@ -99,4 +93,7 @@
 	
 ?> 
 
-</table></div>
+</table>
+<p>Export logs</p>
+
+</div>
