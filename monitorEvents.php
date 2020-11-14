@@ -2,8 +2,6 @@
 	include "config.php";
 	require_once "monitor.php";
 	
-	header("refresh: 60;");
-	
 	$monitor = new Monitor($db);
 
 	try {
@@ -23,11 +21,14 @@
 		foreach($monitor_data as $row) {
 			$name = $row['name'];
 			$url = $row['url'];
+			$action = $row['action'];
+			$hasStatusChanged = False;
 			
-			// get http status
-			if($row['monitor_type'] == "http") {
+			if ($action == "Paused") {
+				$status = $action;
+			} else if ($row['monitor_type'] == "http") {
 				$status = $monitor->getStatus($url);
-			} else if($row['monitor_type'] == "keyword") {
+			} else if ($row['monitor_type'] == "keyword") {
 				$keyword = $row['keyword'];
 				$found = $monitor->hasKeyword($keyword, $url);
 				
@@ -41,14 +42,13 @@
 				} else {
 					$status = "Down - Keyword '$keyword' Not Found";	// not found, alert if it exists
 				}
-				
 			}
-			
+
 			// check active monitor table
 			$monitor_id = $row['id'];
-			$active_monitor = $monitor->getMonitorEvent($monitor_id);
+			$active_monitor = $monitor->getMonitorEvent2($monitor_id);
 			
-			$datetime = date("Y-m-d H:i:s"); 
+			$datetime = date("Y-m-d H:i:s");
 			
 			// add if monitor doesn't exist
 			if (empty($active_monitor)) {
@@ -56,21 +56,30 @@
 				$duration = "0 hrs, 0 mins";
 			} else {
 				// monitor exists, so check if the status changed
-				$datetime = $active_monitor['timestamp'];
-				$current_datetime = date("Y-m-d H:i:s");
+				$last_datetime = $active_monitor['timestamp'];
+				$event_id = $active_monitor['monitor_event_id'];
+				$last_status = $active_monitor['status'];
 				
-				// Initializing the two datetime objects
-				$datetime1 = new DateTime($datetime); 
-				$datetime2 = new DateTime($current_datetime); 
+				// status changed, so make new entry
+				if ($last_status != $status) {
+					$monitor->createMonitorEvent($monitor_id, $status, $datetime);
+					$duration = "0 hrs, 0 mins";	
+				} else {
+					// Initializing the two datetime objects
+					$datetime1 = new DateTime($last_datetime); 
+					$datetime2 = new DateTime($datetime); 
 
-				// Calling the diff() function on above 
-				// two DateTime objects 
-				$difference = $datetime1->diff($datetime2); 
-				//$duration = $difference->format('%d') . " days, " . $difference->format('%h') . " hrs, " . $difference->format('%i') . " mins";
-				$hours = $difference->h + ($difference->days*24);
-				$duration = $hours . " hrs, " . $difference->format('%i') . " mins";
+					// Calling the diff() function on above two DateTime objects 
+					$difference = $datetime1->diff($datetime2); 
+					$hours = $difference->h + ($difference->days*24);
+					$duration = $hours . " hrs, " . $difference->format('%i') . " mins";
+					
+					//$monitor->updateMonitorEvent($monitor_id, $status, $last_datetime, $hours);
+					$monitor->updateMonitorEvent2($event_id, $hours);
+					
+					$datetime = $last_datetime; // to display in html
+				}
 				
-				$monitor->updateMonitorEvent($monitor_id, $status, $datetime, $hours);
 			}
 			
 			//$monitor->writeToLogFile($name, $status, $datetime, $hours, $url);

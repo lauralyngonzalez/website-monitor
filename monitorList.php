@@ -22,16 +22,24 @@
 			$name = $row['name'];
 			$type = $row['monitor_type'];
 			$monitor_id = $row['id'];
-	
+			$action = $row['action'];
 ?> 
 
 <tr>
-	
 	<td style="width:50%"><?php echo $name; ?></td>
 	<td style="width:20%"><?php echo $type; ?></td>
 	<td style="width:30%">
 		<form style="border:none;margin:0px;padding:0px;display:inline" action="monitorForm.php" method="post">
-		<button type="submit" name="id" value="<?php echo $monitor_id; ?>">Edit</button>
+			<button type="submit" name="id" value="<?php echo $monitor_id; ?>">Edit</button>
+		</form>
+		<form style="border:none;margin:0px;padding:0px;display:inline" action="processMonitor.php" method="post">
+			<button type="submit" name="action" value="<?php echo $monitor_id; ?>">
+				<?php if ($action == "Paused") {
+					echo "Start";
+				} else {
+					echo "Pause";
+				}?>
+			</button>
 		</form>
 	</td>
 </tr>
@@ -49,4 +57,5 @@
 </table>
 
 </div>
+
 

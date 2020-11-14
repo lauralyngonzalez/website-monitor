@@ -116,6 +116,18 @@ class Monitor {
 		}
 	}
 	
+	// update an existing monitor using the event ID
+	public function updateMonitorEvent2($event_id, $duration) {
+		try {
+			$sql = "UPDATE monitor_event SET duration=?
+				WHERE monitor_event_id = '$event_id'";
+			$stmt = $this->db->prepare($sql);
+			$stmt->execute([$duration]);
+		} catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+		}
+	}
+	
 	// Deletes a monitor from both the active monitor events and monitors
 	public function deleteMonitor($monitor_id) {
 		try {
@@ -128,12 +140,40 @@ class Monitor {
 		}
 	}
 	
+	// Pause a monitor
+	public function changeMonitorAction($monitor_id, $action) {
+		// update the last monitor event
+		try {
+			$sql = "UPDATE monitor SET action=?
+				WHERE id = $monitor_id ";
+			$stmt = $this->db->prepare($sql);
+			$stmt->execute([$action]);
+		} catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+		}
+	}
+	
 	// Gets active monitors by the monitor id
 	public function getMonitorEvent($monitor_id) {
 		try {
 			$stmt = $this->db->prepare("SELECT status, timestamp, duration, notified
 					FROM monitor_event
 					WHERE monitor_id = '$monitor_id'");
+			$stmt->execute();
+			$active_monitor = $stmt->fetch();
+		} catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+		}
+		return $active_monitor;
+	}
+	
+	// Gets active monitors by the monitor id
+	public function getMonitorEvent2($monitor_id) {
+		try {
+			$stmt = $this->db->prepare("SELECT status, timestamp, duration, notified
+					FROM monitor_event
+					WHERE monitor_id = '$monitor_id'
+					ORDER BY monitor_event_id DESC;");
 			$stmt->execute();
 			$active_monitor = $stmt->fetch();
 		} catch(PDOException $e) {

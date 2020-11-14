@@ -1,8 +1,3 @@
-<html><head>
-	<title>Website Monitor</title>
-	<link rel="stylesheet" href="styles.css">
-</head></html>
-
 <?php
 	include "config.php";
 	require_once "monitor.php";
@@ -56,7 +51,23 @@
 
 		$monitor->updateMonitor($monitor_id, $host, $name, $keyword, $keyword_opt_bool);
 		echo "Record updated!";
-
+	} else if (isset($_POST['action'])) { // pause or start the monitor
+		
+		$monitor = new Monitor($db);
+		$monitor_id = $_POST['action'];
+		$datetime = date("Y-m-d H:i:s");
+		
+		$monitor_data = $monitor->getMonitor($monitor_id);
+		$curr_action = $monitor_data['action'];
+		
+		if ($curr_action == "Paused") {
+			$monitor->changeMonitorAction($monitor_id, "Started");
+		} else {
+			$monitor->changeMonitorAction($monitor_id, "Paused");
+		}
+		
+		echo 'undoing '.$curr_action." on ".$_POST['action'];
+		
 	} else {	// cancel
 		header("Location: index.php");
 		exit;
@@ -65,3 +76,8 @@
 	header('Refresh: 1; url=index.php');
 	
 ?>
+
+<html><head>
+	<title>Website Monitor</title>
+	<link rel="stylesheet" href="styles.css">
+</head></html>

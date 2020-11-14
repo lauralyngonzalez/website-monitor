@@ -5,42 +5,56 @@
 	<h3>Select what to monitor:</h3>
 
 	<form name="monitor_event" action="./processMonitor.php" onsubmit="return keywordSelected()" method="post">
-		<ul>
-			<li>
+		
+			<div class="row">
 				<select id="monitor_type" name="monitor_type" onchange="keywordSelected()">
 					<option value="keyword">Keyword</option>
 					<option value="http" selected>HTTP</option>
 				</select>
-			</li>
-			<li>
-				<label for="host">URL:</label>
-				<input type="text" id="host" name="host" value="http://" required/>
-			</li>
-			<li>
-				<label for="name">Name:</label>
-				<input type="text" id="name" name="name" required/>
-			</li>
-			<li id="keywordText">
-				<label for="keyword">Keyword:</label>
-				<input type="text" id="keyword" name="keyword"/>
-			</li>
-			<li id="keywordExistOptions">
-				<label for="alert_keyword">Alert when:</label>
-				<select id="keyword_option" name="keyword_option" onchange="keywordSelected()">
-					<option value="exists">keyword exists</option>
-					<option value="doesNotExist">keyword does not exist</option>
-				</select>
-			</li>
-			<li>
+			</div>
+			<div class="row">
+				<div class="col-25">
+					<label for="host">URL:</label>
+				</div>
+				<div class="col-75">
+					<input type="text" id="host" name="host" value="http://" required/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-25">
+					<label for="name">Name:</label>
+				</div>
+				<div class="col-75">
+					<input type="text" id="name" name="name" required/>
+				</div>
+			</div>
+			<div class="row" id="keywordText">
+				<div class="col-25">
+					<label for="keyword">Keyword:</label>
+				</div>
+				<div class="col-75">
+					<input type="text" id="keyword" name="keyword"/>
+				</div>
+			</div>
+			<div class="row" id="keywordExistOptions">
+				<div class="col-25">
+					<label for="alert_keyword">Alert when:</label>
+				</div>
+				<div class="col-75">
+					<select id="keyword_option" name="keyword_option" onchange="keywordSelected()">
+						<option value="exists">keyword exists</option>
+						<option value="doesNotExist">keyword does not exist</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
 				<input type="submit" name="submit" value="Submit">
-			</li>
-		</ul>
+			</div>
+		
 	</form>
 	</div>
 
 	<script>
-		//keywordSelected();
-
 		//when keyword is selected, change visibility of options and required fields
 		function keywordSelected() {
 			var monitor_selected = document.getElementById("monitor_type").value;
