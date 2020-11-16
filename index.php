@@ -20,7 +20,8 @@
 	</div>
 
 	<?php
-		include 'monitorEvents.php';
+		include 'processEvents.php';
+		include 'displayEvents.php';
 	?>
 
 </div>

@@ -5,7 +5,7 @@
 	$monitor = new Monitor($db);
 
 	try {
-		$monitor_data = $monitor->getMonitors();
+		$monitor_data = $monitor->getAll('monitor');
 
 ?>
 

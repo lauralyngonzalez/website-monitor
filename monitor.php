@@ -36,10 +36,10 @@ class Monitor {
 		}
 	}
 	
-	// Gets all monitors
-	public function getMonitors() {
+	// Gets all data from the given table
+	public function getAll($table) {
 		try {
-			$stmt = $this->db->prepare("SELECT * FROM monitor");
+			$stmt = $this->db->prepare("SELECT * FROM $table");
 			$stmt->execute();
 			$monitor_data = $stmt->fetchAll();
 		} catch(PDOException $e) {
@@ -104,23 +104,10 @@ class Monitor {
 		}
 	}
 	
-	// update an existing monitor
-	public function updateMonitorEvent($monitor_id, $status, $datetime, $duration) {
-		try {
-			$sql = "UPDATE monitor_event SET status=?, timestamp=?, duration=?
-				WHERE monitor_id = $monitor_id ";
-			$stmt = $this->db->prepare($sql);
-			$stmt->execute([$status, $datetime, $duration]);
-		} catch(PDOException $e) {
-			echo "Error: " . $e->getMessage();
-		}
-	}
-	
 	// update an existing monitor using the event ID
-	public function updateMonitorEvent2($event_id, $duration) {
+	public function updateMonitorEvent($event_id, $duration) {
 		try {
-			$sql = "UPDATE monitor_event SET duration=?
-				WHERE monitor_event_id = '$event_id'";
+			$sql = "UPDATE monitor_event SET duration_mins=? WHERE monitor_event_id = $event_id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->execute([$duration]);
 		} catch(PDOException $e) {
@@ -156,21 +143,7 @@ class Monitor {
 	// Gets active monitors by the monitor id
 	public function getMonitorEvent($monitor_id) {
 		try {
-			$stmt = $this->db->prepare("SELECT status, timestamp, duration, notified
-					FROM monitor_event
-					WHERE monitor_id = '$monitor_id'");
-			$stmt->execute();
-			$active_monitor = $stmt->fetch();
-		} catch(PDOException $e) {
-			echo "Error: " . $e->getMessage();
-		}
-		return $active_monitor;
-	}
-	
-	// Gets active monitors by the monitor id
-	public function getMonitorEvent2($monitor_id) {
-		try {
-			$stmt = $this->db->prepare("SELECT status, timestamp, duration, notified
+			$stmt = $this->db->prepare("SELECT *
 					FROM monitor_event
 					WHERE monitor_id = '$monitor_id'
 					ORDER BY monitor_event_id DESC;");
@@ -188,7 +161,7 @@ class Monitor {
 		
 		// include the header
 		if (!file_exists($filename)) {
-			$header = "Monitor,Status,Date-Time,Duration(in hrs),Monitor URL".PHP_EOL;
+			$header = "Monitor,Status,Date-Time,Duration(in mins),Monitor URL".PHP_EOL;
 			file_put_contents($filename, $header, FILE_APPEND);
 		}
 		

@@ -5,18 +5,7 @@
 	$monitor = new Monitor($db);
 
 	try {
-		$monitor_data = $monitor->getMonitors();
-
-?>
-
-<div class="monitorEvents">
-
-<h3>Monitor Events:</h3>
-
-<table style="width:100%">
-<tr><th>status</th><th>monitor</th><th>date-time</th><th>duration</th></tr>
-
-<?php
+		$monitor_data = $monitor->getAll('monitor');
 
 		foreach($monitor_data as $row) {
 			$name = $row['name'];
@@ -46,7 +35,7 @@
 
 			// check active monitor table
 			$monitor_id = $row['id'];
-			$active_monitor = $monitor->getMonitorEvent2($monitor_id);
+			$active_monitor = $monitor->getMonitorEvent($monitor_id);
 			
 			$datetime = date("Y-m-d H:i:s");
 			
@@ -70,12 +59,12 @@
 					$datetime2 = new DateTime($datetime); 
 
 					// Calling the diff() function on above two DateTime objects 
-					$difference = $datetime1->diff($datetime2); 
-					$hours = $difference->h + ($difference->days*24);
+					$difference = $datetime1->diff($datetime2); // DateInterval object
+					$hours = $difference->days*24;
 					$duration = $hours . " hrs, " . $difference->format('%i') . " mins";
 					
-					//$monitor->updateMonitorEvent($monitor_id, $status, $last_datetime, $hours);
-					$monitor->updateMonitorEvent2($event_id, $hours);
+					$total_mins = intval($hours*60 + $difference->format('%i'));
+					$monitor->updateMonitorEvent($event_id, $total_mins);
 					
 					$datetime = $last_datetime; // to display in html
 				}
@@ -83,16 +72,6 @@
 			}
 			
 			//$monitor->writeToLogFile($name, $status, $datetime, $hours, $url);
-?>
-
-<tr>
-	<td style="width:30%"><?php echo $status; ?></td>
-	<td style="width:25%"><?php echo $name; ?></td>
-	<td style="width:25%"><?php echo $datetime; ?></td>
-	<td style="width:20%"><?php echo $duration; ?></td>
-</tr>
-
-<?php
 		}
 	} catch(PDOException $e) {
 		echo "Error: " . $e->getMessage();
@@ -101,8 +80,3 @@
 	$db = null;
 	
 ?> 
-
-</table>
-<p>Export logs</p>
-
-</div>
