@@ -48,9 +48,8 @@
 		
 	$db = null;
 	
-?> 
+?>
 
 </table>
-<p>Export logs</p>
-
+<p><a href="monitorlog.php?action=getCSV">Export logs</p>
 </div>

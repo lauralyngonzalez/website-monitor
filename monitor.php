@@ -1,4 +1,3 @@
-
 <?php
 require_once 'simple_html_dom.php';
 
@@ -155,20 +154,6 @@ class Monitor {
 		return $active_monitor;
 	}
 	
-	// Write to log file
-	public function writeToLogFile($monitor_name, $status, $datetime, $duration, $url) {
-		$filename = './logs/log_'.date("n.j.Y").'.csv';
-		
-		// include the header
-		if (!file_exists($filename)) {
-			$header = "Monitor,Status,Date-Time,Duration(in mins),Monitor URL".PHP_EOL;
-			file_put_contents($filename, $header, FILE_APPEND);
-		}
-		
-		$log = $monitor_name.",".$status.",".$datetime.",".$duration.",".$url.PHP_EOL;
-		file_put_contents($filename, $log, FILE_APPEND);
-	}
-	
 	/*
 	// Checks status and alerts owner if status is down
 	public function checkStatus($monitor_id, $) {
@@ -201,4 +186,4 @@ class Monitor {
 	*/
 }
 
-?> 
+?>

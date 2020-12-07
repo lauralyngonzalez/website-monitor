@@ -23,7 +23,7 @@
 		include 'processEvents.php';
 		include 'displayEvents.php';
 	?>
-
+	
 </div>
 </body>
 </html>

@@ -71,7 +71,6 @@
 				
 			}
 			
-			//$monitor->writeToLogFile($name, $status, $datetime, $hours, $url);
 		}
 	} catch(PDOException $e) {
 		echo "Error: " . $e->getMessage();
