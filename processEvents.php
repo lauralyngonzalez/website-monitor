@@ -17,6 +17,9 @@
 				$status = $action;
 			} else if ($row['monitor_type'] == "http") {
 				$status = $monitor->getStatus($url);
+				if ($status == 301) {
+					$status = 200;
+				}
 			} else if ($row['monitor_type'] == "keyword") {
 				$keyword = $row['keyword'];
 				$found = $monitor->hasKeyword($keyword, $url);
